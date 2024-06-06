@@ -11,7 +11,7 @@
     "license": "MIT",
     "devDependencies": {
         "electron": "^29.2.0",
-        "babylonjs": "^7.8.2",
+        "babylonjs": "^7.10.0",
         "three": "^0.165.0",
         "three-mesh-bvh": "^0.7.5"
     }
