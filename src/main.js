@@ -5751,9 +5751,9 @@ function downloadBlob(blob, filename) {
 }
 
 async function saveFile(blob, filename, reject) {
-    if (!isElectron() && !isMobile) { // to show a file dialog in Chrome
+    if ("showSaveFilePicker" in window) {
         try {
-            const fileHandle = await self.showSaveFilePicker({
+            const fileHandle = await window.showSaveFilePicker({
                 suggestedName: filename,
                 types: [ { description: "File" } ]
             });
@@ -5768,7 +5768,7 @@ async function saveFile(blob, filename, reject) {
         } catch (err) {
             // canceled
         }
-    } else { // showSaveFilePicker browser compatibility
+    } else {
         reject();
     }
 }

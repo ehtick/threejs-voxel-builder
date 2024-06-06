@@ -74,8 +74,8 @@ python3 update.py
 
 ## Supported Browsers
 - Electron *(recommended)*
-- Google Chrome for desktop
-- Google Chrome for mobile devices
+- Google Chrome
+- Mozilla Firefox *(with some CSS issues)*
 > - PWA A2HS-ready *(add to home screen)*
 > - Tablets with a stylus or Wacom recommended for best experience
 > - Voxel Builder has not been fully tested on mobile devices

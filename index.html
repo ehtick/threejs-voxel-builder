@@ -32,7 +32,6 @@
         :root { /* orange, steelblue */
             --font: Roboto;
             --font-size: 12px;
-            --select: orange;
             --btn-color: #8492a7;
             --btn-bg: #303947;
             --input-bg: #222833CC;
@@ -49,7 +48,7 @@
         html, body { overscroll-behavior-y: contain; user-select: none; overflow: hidden; touch-action: pan-x; -webkit-tap-highlight-color: transparent; } /* prevent pull-down refresh and text selection on chrome mobile + prevent forced scroll + blue tap highlight on touch */
         body { text-rendering: optimizeSpeed; background: white; font-family: var(--font); font-size: var(--font-size); color: silver; position: fixed; width: 100%; height: 100%; cursor: default; }
         a { font-family: var(--font); font-size: var(--font-size); color: steelblue; text-decoration: none; }
-        a:hover { color: var(--select); text-decoration: none; }
+        a:hover { color: orange; text-decoration: none; }
         input[type=number] { font-family: var(--font); font-size: var(--font-size); width: 100%; height: 12px; padding: 4px 0 4px 0; text-indent: 5px; background: var(--input-bg); color: var(--input-color); border: solid 1px var(--borders); border-radius: 2px; text-align: left; }
         input[type=number]:hover { color: steelblue; border: solid 1px #43495a; }
         input[type=number]:disabled { opacity: 0.5; }
@@ -66,10 +65,10 @@
         input[type=checkbox]:disabled { opacity: 0.5; }
         input[type=color] { width: 100%; height: 20px; border-radius: 3px; background: none; outline: none; border: none; }
         input[type=color]::-webkit-color-swatch-wrapper { padding: 0; border: solid 1px transparent; }
-        input[type=color]::-webkit-color-swatch { border: none; border-radius: 3px; border: solid 1px #22222280; }
-        input[type=color]:hover { background: steelblue; cursor: pointer; }
+        input[type=color]::-webkit-color-swatch { border: none; border-radius: 3px; border: solid 1px transparent; }
+        input[type=color]:hover { cursor: pointer; }
         button { font-family: var(--font); font-size: var(--font-size); background: linear-gradient(60deg, #2c3441 0%, #2a323f 100%); color: var(--btn-color); letter-spacing: 0.03em; border-radius: 2px; border: 1px solid var(--borders); }
-        button:hover { background: var(--select); color: #444; cursor: pointer; }
+        button:hover { background: orange; color: #444; cursor: pointer; }
         button:disabled { background: var(--btn-bg); opacity: 0.5; pointer-events: none; }
         label { font-family: var(--font); font-size: var(--font-size); color: var(--label); margin: 0; }
         select { font-family: var(--font); font-size: var(--font-size); width: 100%; background: var(--btn-bg); color: var(--btn-color); padding: 3px 0 3px 0; border: solid 1px var(--borders); border-radius: 2px; outline: none; text-align: center; vertical-align: middle; }
@@ -77,10 +76,10 @@
         option { font-family: var(--font); font-size: var(--font-size); color: silver; background: var(--btn-bg); }
         ul { list-style-type: none; }
         ul li { font-family: var(--font); font-size: var(--font-size); background: var(--btn-bg); color: var(--btn-color); border-radius: 2px; text-align: center; }
-        ul li:hover, .tool_selector { background: var(--select); color: #444; }
+        ul li:hover, .tool_selector { background: orange; color: #444; }
         #loadingscreen { z-index: 5000; background: #181b22DD; position: absolute; width: 100%; height: 100%; }
         #loadingscreen .anim { transform-style: preserve-3d; width: 30px; height: 30px; position: absolute; left: 50%; top: 50%; margin-left: -15px; margin-top: -20px; }
-        #loadingscreen .logo { color: var(--select); font-family: var(--font); font-size: 24px; letter-spacing: 0.08em; width: 200px; height: 30px; position: absolute; left: 50%; top: 50%; margin-left: -100px; margin-top: -100px; text-align: center; }
+        #loadingscreen .logo { color: orange; font-family: var(--font); font-size: 24px; letter-spacing: 0.08em; width: 200px; height: 30px; position: absolute; left: 50%; top: 50%; margin-left: -100px; margin-top: -100px; text-align: center; }
         #loadingscreen .logo :first-child { font-weight: normal; color: var(--white); }
         #loadingscreen .progress { color: slategray; font-size: 11px; letter-spacing: 0.2em; width: 200px; height: 20px; position: absolute; left: 50%; top: 50%; margin-left: -100px; margin-top: 90px; text-align: center; }
         #canvas_render { z-index: 0; image-rendering: pixelated; position: absolute; width: 100%; height: 100%; background: linear-gradient(0deg, #3e465a 0%, #5a657a 100%); }
@@ -118,13 +117,13 @@
         #toolbar_top { z-index: 500; width: 200px; left: 50%; margin-left: -100px; top: 0; text-align: center; position: fixed; }
         #toolbar_C { display: flex; }
         #toolbar_C li { color: var(--btn-color); width: 100%; padding: 8px 0 6px 0; font-size: 11px; font-weight: bold; letter-spacing: 0.06em; border: 1px var(--borders); border-radius: 0; border-top: none; cursor: pointer; }
-        #toolbar_C li:hover { background: var(--btn-bg); color: var(--select); }
+        #toolbar_C li:hover { background: var(--btn-bg); color: orange; }
         #toolbar_C li:nth-child(1) { border-top-left-radius: 2px; border-right: solid 1px var(--borders); }
         #toolbar_C li:nth-child(3) { border-top-right-radius: 2px; border-left: solid 1px var(--borders); }
-        #toolbar_C li.mode_select { background: var(--btn-bg); color: var(--select); }
+        #toolbar_C li.mode_select { background: var(--btn-bg); color: orange; }
         #toolbar_C_mem { display: flex; }
         #toolbar_C_mem li { width: 100%; font-size: 11px; padding: 5px 0 5px 0; background: #3e4558CC; color: var(--btn-color); border: 1px solid var(--borders); border-radius: 0; cursor: pointer; }
-        #toolbar_C_mem li:hover { color: var(--select); }
+        #toolbar_C_mem li:hover { color: orange; }
         #toolbar_C_mem :nth-child(1) { border-bottom-left-radius: 2px; border-right-width: 0; }
         #toolbar_C_mem :nth-child(2) { border-bottom-right-radius: 2px; }
         #toolbar_C_mem :nth-child(3) { padding: 0 2px 0 2px; width: 0; background: none; border: none; }
@@ -136,14 +135,14 @@
         #toolbar_R li:first-child :first-child { width: 50%; float: left; border-right: none; }
         #toolbar_R li:first-child :last-child { width: 50%; }
         #toolbar_R button { background: var(--btn-bg); width: 100%; padding: 6px 0 4px 0; border-top: none; border-radius: 0; }
-        #toolbar_R button:hover { background: var(--select); }
+        #toolbar_R button:hover { background: orange; }
         #toolbar_L { z-index: 1000; opacity: 0.9; width: 75px; position: absolute; left: 0; top: 0; }
         #toolbar_L li { display: inline; background: none; border: none; padding: 0; }
         #toolbar_L li:nth-child(1) button { padding: 4px 0 4px 10px; }
         #toolbar_L li:first-child :first-child { width: 50%; float: left; }
         #toolbar_L li:first-child :last-child { width: 50%; border-left: none; }
         #toolbar_L button { background: var(--btn-bg); width: 100%; padding: 6px 0 4px 0; border-top: none; border-radius: 0; }
-        #toolbar_L button:hover { background: var(--select); }
+        #toolbar_L button:hover { background: orange; }
         #hover { z-index: 450; display: none; bottom: 13%; left: 50%; margin-left: -12px; position: absolute; background: none; }
         #hover li { opacity: 0.9; padding: 5px; border: 1px solid var(--borders); margin: -1px; cursor: pointer; }
         #hover li:nth-child(1) { cursor: move; }
@@ -160,12 +159,12 @@
         #palette { z-index: 400; display: none; background: #31394b30; position: absolute; left: 2px; top: 153px; bottom: 165px; padding-right: 1px; overflow-y: scroll; overflow-x: hidden; }
         #bakerylist { z-index: 400; display: none; background: #31394b30; position: absolute; left: 2px; top: 128px; bottom: 2px; overflow-y: scroll; overflow-x: hidden; }
         #bakerylist .item_name { background: #3e4558cc; width: 62px; font-size: 10px; padding: 2px; margin-bottom: 1px; border: 1px solid var(--borders); border-radius: 2px; text-align: center; }
-        #bakerylist .item_name:hover { background: var(--btn-bg); color: var(--select); }
-        #bakerylist .item_name.bakery_select { background: var(--btn-bg); color: var(--select); }
+        #bakerylist .item_name:hover { background: var(--btn-bg); color: orange; }
+        #bakerylist .item_name.bakery_select { background: var(--btn-bg); color: orange; }
         #material-switch { z-index: 500; position: absolute; left: 3px; bottom: 133px; }
         #material-switch button { font-size: 12px; font-weight: bold; width: 38px; padding: 6px 4px 6px 4px; }
         #colorpicker { z-index: 500; position: absolute; width: 40px; left: 2px; bottom: 100px; }
-        #colorpicker :first-child { height: 30px; }
+        #colorpicker :first-child { height: 28px; }
         #btn-inscreen-bucket { z-index: 9; padding: 3px; color: var(--btn-color); background: none; border: none; left: 5px; bottom: 5px; position: absolute; cursor: pointer; }
         #btn-inscreen-bucket i { font-size: 18px; }
         #marquee { z-index: 500; display: none; background: #00ffff20; border: dotted 2px aqua; position: absolute; }
@@ -174,7 +173,7 @@
         #menu-texture li.img { display: inline-block; }
         #menu-texture img { object-fit: fill; border: solid 1px #6b798d; width: 24px; height: 21px; margin: -2px 2px 3px 2px; cursor: pointer; }
         #menu-storage img { object-fit: contain; background: #2b334190; border: dotted 1px #1e1f24; width: 115px; height: 60px; margin-left: 1px; cursor: pointer; }
-        #menu-storage li div button { font-size: 11px; letter-spacing: 0.05em; width: 60px; padding: 5px 0 5px 0; }
+        #menu-storage li div button { font-size: 11px; letter-spacing: 0.05em; width: 59px; padding: 5px 0 5px 0; }
         #menu-pathtracer li .btn_select_pt { color: steelblue; }
         #btn-symm-axis-s:hover { background: var(--input-bg); }
         #btn-symm-axis-x:hover { background: var(--input-bg); }
@@ -199,16 +198,16 @@
         #notifier { z-index: 2000; display: none; font-size: 11px; background: #2a2f3aCC; color: var(--btn-color); border: solid 1px #22222280; box-shadow: 0 0 2px #21262e50; position: absolute; width: fit-content; left: 50%; top: 85px; transform: translateX(-50%); padding: 3px 4px 2px 4px; letter-spacing: 1px; text-align: center; border-radius: 3px; pointer-events: none; }
         .spacer { height: 3px; }
         .row { display: flex; width: 100%; align-items: center; }
-        .warn { font-size: 11px; opacity: 0.6; font-style: italic; }
         .material-icons { font-family: 'Material Icons'; font-weight: normal; font-style: normal; font-size: 16px; vertical-align: middle; text-align: center; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; pointer-events: none; font-feature-settings: 'liga'; -webkit-font-feature-settings: 'liga'; -webkit-font-smoothing: antialiased; }
         ::placeholder { color: #45515c; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: none; }
         ::-webkit-scrollbar-thumb { background: steelblue; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--select); }
+        ::-webkit-scrollbar-thumb:hover { background: orange; }
+        
         .cube { transform-style: preserve-3d; transform: rotateX(45deg) rotateZ(45deg); animation: rotation 2s infinite; }
         .cube-faces { transform-style: preserve-3d; height: 30px; width: 30px; position: relative; transform-origin: 0 0; transform: translateX(0) translateY(0) translateZ(-30px); }
-        .cube-face { position: absolute; inset: 0; background: #4682b470; border: solid 1px #ffa500CC; }
+        .cube-face { position: absolute; inset: 0; background: #4682b470; border: solid 1px #ffa500CC; outline: 1px solid transparent; }
         .cube-face.shadow { transform: translateZ(-40px); background: #11111130; border-color: #11111160; }
         .cube-face.top { transform: translateZ(30px); }
         .cube-face.front { transform-origin: 0 50%; transform: rotateY(-90deg); }
@@ -219,6 +218,21 @@
             0% { transform: rotateX(45deg) rotateY(0) rotateZ(45deg); animation-timing-function: cubic-bezier(0.17, 0.84, 0.44, 1); }
             50% { transform: rotateX(45deg) rotateY(0) rotateZ(225deg); animation-timing-function: cubic-bezier(0.76, 0.05, 0.86, 0.06); }
             100% { transform: rotateX(45deg) rotateY(0) rotateZ(405deg); animation-timing-function: cubic-bezier(0.17, 0.84, 0.44, 1); }
+        }
+
+        @-moz-document url-prefix() {
+            input[type=range] { margin-top: 8px; }
+            input[type=range]::-moz-range-track { background: #ADAEAF; }
+            input[type=range]::-moz-range-thumb { transform: scale(0.8); background: steelblue; border: none; }
+            input[type=range]::-moz-range-thumb:hover { cursor: pointer; }
+            input[type=color] { height: 18px; }
+            input[type=color]::-moz-color-swatch { border: none; }
+            select { text-indent: 2px; }
+            #palette { top: 158px; bottom: 166px; }
+            #bakerylist { top: 132px; }
+            #colorpicker { width: 38px; left: 3px; }
+            #colorpicker :first-child { height: 26px; }
+            #menu-inscreen-bottom { bottom: 22px; }
         }
     </style>
 </head>

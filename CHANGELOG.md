@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Clean up and improve voxel transforms
 - Update PT to support three r165 framebuffers
 - Voxel colors are used for the point-cloud
+- Firefox optimization (fix save-as and css styles)
 - Fix unwanted camera rotation in most cases
 - Fix PT crashes on 0.0 inputs
 - Fix camera fov
