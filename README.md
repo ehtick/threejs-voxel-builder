@@ -22,11 +22,11 @@ Voxel-based 3D modeling application<br>
 - Local storages, quicksave, undo
 
 **Model and Paint**
-- High performance picking system
 - Generators *(terrain, cube, sphere, isometric...)*
 - Interactive modeling toolsets [?](https://github.com/nimadez/voxel-builder/wiki/model)
 - Symmetric drawing and painting
 - Color groups and transform tools
+- High performance GPU picking system
 
 **Rendering**
 - High performance voxel engine
@@ -55,7 +55,7 @@ Voxel-based 3D modeling application<br>
 - Ad-free, no trackers, no logging
 
 ## Installation
-Install [Electron](https://github.com/electron/electron/releases) for linux or windows
+Install [Electron](https://github.com/electron/electron/releases) for Linux or Windows
 ```
 electron-v*-linux-x64.zip
 electron-v*-win32-x64.zip
@@ -75,7 +75,7 @@ python3 update.py
 ## Supported Browsers
 - Electron *(recommended)*
 - Google Chrome
-- Mozilla Firefox *(with some CSS issues)*
+- Mozilla Firefox *(with minor CSS issues)*
 > - PWA A2HS-ready *(add to home screen)*
 > - Tablets with a stylus or Wacom recommended for best experience
 > - Voxel Builder has not been fully tested on mobile devices

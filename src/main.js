@@ -16,19 +16,20 @@
     11. Palette (color palette)
     12. Helper (overlays)
     13. Tool
-    14. Symmetry
-    15. Voxelizer
-    16. Generator
-    17. Bakery
-    18. Snapshot
-    19. Memory
-    20. Project
-    21. UserInterface
-    22. UserInterfaceAdvanced
-    23. Preferences
-    24. Events
-    25. Websocket
-    26. Utils
+    14. Tool Bakery
+    15. Symmetry
+    16. Voxelizer
+    17. Generator
+    18. Bakery
+    19. Snapshot
+    20. Memory
+    21. Project
+    22. UserInterface
+    23. UserInterfaceAdvanced
+    24. Preferences
+    25. Events
+    26. Websocket
+    27. Utils
 */
 //data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 90%22><text x=%220.18em%22 y=%221.1em%22 font-size=%2260%22 style="filter: grayscale(); opacity: 0.15;">❌</text></svg>
 
@@ -146,6 +147,7 @@ const helper = new Helper(scene, sceneAxisView);
 const symmetry = new Symmetry();
 
 const tool = new Tool(scene);
+const toolBakery = new ToolBakery(scene);
 
 const project = new Project(scene);
 const snapshot = new Snapshot(scene);
@@ -2839,15 +2841,15 @@ function Tool(scene) {
     this.toolSelector = function(toolName, finishTransforms = false) {
         this.name = toolName;
 
-        const elem = document.getElementsByClassName('tool_' + this.name);
+        const elems = document.getElementsByClassName('tool_' + this.name);
         for (const i of document.querySelectorAll('li'))
             if (i.classList.contains("tool_selector"))
                 i.classList.remove("tool_selector");
         for (const i of document.querySelectorAll('button'))
             if (i.classList.contains("tool_selector"))
                 i.classList.remove("tool_selector");
-        for (let i = 0; i < elem.length; i++)
-            elem[i].classList.add("tool_selector");
+        for (let i = 0; i < elems.length; i++)
+            elems[i].classList.add("tool_selector");
 
         scene.activeCamera.attachControl(canvas, true);
         helper.clearOverlays();
@@ -2859,6 +2861,91 @@ function Tool(scene) {
     }
 
     this.init();
+}
+
+
+// -------------------------------------------------------
+// Tool Bakery
+
+
+function ToolBakery(scene) {
+    this.name = 'select';
+    this.selected = [];
+    this.pick = null;
+
+    this.onToolDown = function() {
+        this.pick = scene.pick(scene.pointerX, scene.pointerY, (mesh) => {
+            return bakery.meshes.includes(mesh);
+        });
+
+        if (this.pick && this.pick.hit) {
+            switch (this.name) {
+                case 'select':
+                    bakery.deselectMesh();
+                    uix.bindTransformGizmo(this.pick.pickedMesh);
+                    break;
+                case 'merge':
+                    const idx = this.selected.indexOf(this.pick.pickedMesh);
+                    if (idx == -1) {
+                        this.selected.push(this.pick.pickedMesh);
+                        highlightOverlayMesh(this.pick.pickedMesh, COL_ORANGE_RGB);
+                        highlightOutlineMesh(this.pick.pickedMesh, COL_ORANGE_RGB);
+                    } else {
+                        this.selected.splice(idx, 1);
+                        this.pick.pickedMesh.renderOverlay = false;
+                        this.pick.pickedMesh.renderOutline = false;
+                    }
+                    break;
+            }
+        }
+    }
+
+    this.mergeBakes = function() {
+        if (this.selected.length == 1) {
+            ui.notification('pick more meshes ...');
+            return;
+        }
+        
+        if (this.selected.length > 1) {
+            for (let i = 0; i < this.selected.length; i++) {
+                this.selected[i].renderOverlay = false;
+                this.selected[i].renderOutline = false;
+            }
+
+            bakery.mergeSelected(this.selected);
+
+            this.selected = [];
+            this.toolSelector('select');
+        } else {
+            ui.notification('pick meshes to merge');
+        }
+    }
+
+    this.cancelSelection = function() {
+        for (let i = 0; i < this.selected.length; i++) {
+            this.selected[i].renderOverlay = false;
+            this.selected[i].renderOutline = false;
+        }
+        this.selected = [];
+        this.toolSelector('select');
+    }
+
+    this.toolSelector = function(toolName) {
+        this.name = toolName;
+
+        const elems = document.getElementsByClassName('tool_' + this.name);
+        for (let i of document.querySelectorAll('li'))
+            if (i.classList.contains("tool_bakery_selector"))
+                i.classList.remove("tool_bakery_selector");
+        for (let i of document.querySelectorAll('button'))
+            if (i.classList.contains("tool_bakery_selector"))
+                i.classList.remove("tool_bakery_selector");
+        for (let i = 0; i < elems.length; i++)
+            elems[i].classList.add("tool_bakery_selector");
+
+        bakery.deselectMesh();
+        uix.unbindTransformGizmo();
+    }
 }
 
 
@@ -3459,14 +3546,14 @@ function Bakery(scene) {
 
     this.exportOptions = {
         shouldExportNode: (node) => {
-            return bakery.meshes.includes(node);
+            return this.meshes.includes(node);
         }
     };
 
     this.exportOptionsSelected = {
         shouldExportNode: (node) => {
-            if (ui.domExportSelectedBake.checked && bakery.selected)
-                return bakery.selected === node;
+            if (ui.domExportSelectedBake.checked && this.selected)
+                return this.selected === node;
             return false;
         }
     };
@@ -3602,12 +3689,12 @@ function Bakery(scene) {
 
             const mesh = BABYLON.Mesh.MergeMeshes(this.meshes, true, true);
             resetPivot(mesh);
-            mesh.name = '_merge';
+            mesh.name = '_merged';
 
-            clearMeshArray();
+            this.clearMeshArray();
 
             material.setPBRTexture();
-            mesh.material = material.mat_pbr.clone('_merge');
+            mesh.material = material.mat_pbr.clone('_merged');
 
             mesh.checkCollisions = true;
             mesh.receiveShadows = true;
@@ -3617,9 +3704,39 @@ function Bakery(scene) {
             uix.bindTransformGizmo(mesh);
             uix.gizmo.attachToMesh(mesh);
             
-            bakery.meshes.push(mesh);
-            bakery.createBakeryList();
+            this.meshes.push(mesh);
+            this.createBakeryList();
         }
+    }
+
+    this.mergeSelected = function(bakes) {
+        const mesh = BABYLON.Mesh.MergeMeshes(bakes, true, true);
+        resetPivot(mesh);
+        mesh.name = '_merged';
+
+        for (let i = 0; i < bakes.length; i++) {
+            this.meshes.splice(this.meshes.indexOf(bakes[i]), 1);
+            if (bakes[i].material) {
+                if (bakes[i].material.albedoTexture)
+                    bakes[i].material.albedoTexture.dispose();
+                bakes[i].material.dispose();
+            }
+            bakes[i].dispose();
+        }
+
+        material.setPBRTexture();
+        mesh.material = material.mat_pbr.clone('_merged');
+
+        mesh.checkCollisions = true;
+        mesh.receiveShadows = true;
+        light.addMesh(mesh);
+        light.updateShadowMap();
+
+        uix.bindTransformGizmo(mesh);
+        uix.gizmo.attachToMesh(mesh);
+        
+        this.meshes.push(mesh);
+        this.createBakeryList();
     }
 
     this.deleteSelected = async function() {
@@ -3657,9 +3774,9 @@ function Bakery(scene) {
     }
 
     this.onGizmoAttached = function(mesh) {
-        bakery.deselectMesh(); // on user select
-        bakery.selectMesh(mesh);
-        bakery.getMaterial();
+        this.deselectMesh(); // on user select
+        this.selectMesh(mesh);
+        this.getMaterial();
     }
 
     this.setBakesVisibility = function(isVisible) {
@@ -3679,7 +3796,7 @@ function Bakery(scene) {
     this.clearBakes = async function(isAlert = false) {
         if (this.meshes.length > 0) {
             if (isAlert && !await ui.showConfirm('clear all baked meshes?')) return;
-            clearMeshArray();
+            this.clearMeshArray();
             this.selected = null;
             this.createBakeryList();
             uix.unbindTransformGizmo();
@@ -3758,25 +3875,25 @@ function Bakery(scene) {
 
     this.createBakeryList = function() {
         ui.domBakeryList.innerHTML = "";
-        for (let i = 0; i < bakery.meshes.length; i++) {
+        for (let i = 0; i < this.meshes.length; i++) {
             const item = document.createElement('div');
             const name = document.createElement('div');
             name.classList.add('item_name');
-            name.innerHTML = bakery.meshes[i].name;
+            name.innerHTML = this.meshes[i].name;
             name.spellcheck = false;
             item.onclick = () => {
-                bakery.deselectMesh();
-                bakery.selectMesh(bakery.meshes[i]);
+                this.deselectMesh();
+                this.selectMesh(this.meshes[i]);
                 uix.bindTransformGizmo(this.meshes[i]);
                 uix.gizmo.attachToMesh(this.meshes[i]);
             };
             item.onkeyup = () => {
-                bakery.meshes[i].name = name.innerHTML;
+                this.meshes[i].name = name.innerHTML;
             };
             item.onpaste = (ev) => {
                 ev.preventDefault();
                 name.innerHTML = ev.clipboardData.getData('Text');
-                bakery.meshes[i].name = name.innerHTML;
+                this.meshes[i].name = name.innerHTML;
             };
             item.ondblclick = () => {
                 name.contentEditable = true;
@@ -3793,8 +3910,8 @@ function Bakery(scene) {
 
     this.bakeListSelect = function(mesh) {
         let idx = -1;
-        for (let i = 0; i < bakery.meshes.length; i++)
-            if (bakery.meshes[i] === mesh)
+        for (let i = 0; i < this.meshes.length; i++)
+            if (this.meshes[i] === mesh)
                 idx = i;
         
         if (ui.domBakeryList.children[idx]) {
@@ -3818,7 +3935,7 @@ function Bakery(scene) {
                     if (container.meshes[i].name !== '__root__') {
                         const baked = container.meshes[i].clone(container.meshes[i].name);
                         normalizeMeshGLTF(baked, container.meshes[i].material.clone(container.meshes[i].name));
-                        bakery.meshes.push(baked);
+                        this.meshes.push(baked);
                         count += 1;
                     }
                 }
@@ -3832,8 +3949,8 @@ function Bakery(scene) {
                     } else {
                         builder.setMeshVisibility(false); // user may act faster
                     }
-                    bakery.updateReflectionTextures();
-                    bakery.createBakeryList();
+                    this.updateReflectionTextures();
+                    this.createBakeryList();
                     light.updateShadowMap();
                 }
                 engine.hideLoadingUI();
@@ -3842,6 +3959,20 @@ function Bakery(scene) {
                 ui.notification("unable to load bake");
                 console.error(reason.message);
             });
+    }
+
+    this.clearMeshArray = function () {
+        scene.blockfreeActiveMeshesAndRenderingGroups = true; // save unnecessary
+        for (let i = 0; i < this.meshes.length; i++) { // dispose() computation
+            if (this.meshes[i].material.albedoTexture)
+                this.meshes[i].material.albedoTexture.dispose();
+            if (this.meshes[i].material.reflectionTexture)
+                this.meshes[i].material.reflectionTexture.dispose();
+            this.meshes[i].material.dispose();
+            this.meshes[i].dispose();
+        }
+        scene.blockfreeActiveMeshesAndRenderingGroups = false;
+        this.meshes = [];
     }
 
     function normalizeMeshGLTF(mesh, material) {
@@ -3857,20 +3988,6 @@ function Bakery(scene) {
         mesh.checkCollisions = true;
         mesh.receiveShadows = true;
         light.addMesh(mesh);
-    }
-
-    function clearMeshArray() {
-        scene.blockfreeActiveMeshesAndRenderingGroups = true; // save unnecessary
-        for (let i = 0; i < bakery.meshes.length; i++) { // dispose() computation
-            if (bakery.meshes[i].material.albedoTexture)
-                bakery.meshes[i].material.albedoTexture.dispose();
-            if (bakery.meshes[i].material.reflectionTexture)
-                bakery.meshes[i].material.reflectionTexture.dispose();
-            bakery.meshes[i].material.dispose();
-            bakery.meshes[i].dispose();
-        }
-        scene.blockfreeActiveMeshesAndRenderingGroups = false;
-        bakery.meshes = [];
     }
 }
 
@@ -4094,11 +4211,6 @@ function Project(scene) {
     }
 
     this.load = function(data) {
-        if (data.startsWith(';')) {
-            loader(parseINI(data)); // backward compatibity < 4.0.3
-            return;
-        }
-        
         try {
             loader(JSON.parse(data));
         } catch(err) {
@@ -4478,6 +4590,7 @@ function UserInterface(scene) {
             builder.setMeshVisibility(false);
             bakery.setBakesVisibility(true);
             bakery.createBakeryList();
+            toolBakery.toolSelector('select');
             helper.displayGridPlane(helper.isFloorPlaneActive, true);
             helper.displayWorkplane(helper.isWorkplaneActive);
             helper.toggleAxisPlane(false);
@@ -4993,7 +5106,10 @@ function UserInterfaceAdvanced(scene) {
                 });
             });
 
-        this.gizmo.attachableMeshes = meshes;
+        (meshes.length > 1) ?
+            this.gizmo.attachableMeshes = meshes :
+            this.gizmo.attachableMeshes = [meshes];
+
         this.gizmo.onAttachedToMeshObservable.add((mesh) => {
             (mesh) ? bakery.onGizmoAttached(mesh) : bakery.deselectMesh();
         });
@@ -5250,7 +5366,7 @@ scene.onPointerObservable.add((pInfo) => {
         case BABYLON.PointerEventTypes.POINTERDOWN:
             if (pInfo.event.button > 0) return;
             if (MODE == 0) tool.handleToolDown(pInfo.pickInfo);
-            else if (MODE == 2) uix.bindTransformGizmo(bakery.meshes);
+            if (MODE == 2) toolBakery.onToolDown();
             break;
         case BABYLON.PointerEventTypes.POINTERMOVE:
             if (MODE == 0) tool.handleToolMove(pInfo.pickInfo);
@@ -5792,11 +5908,9 @@ function dataURItoBlob(dataURI) {
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
     const ab = new ArrayBuffer(byteString.length);
     const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
+    for (let i = 0; i < byteString.length; i++)
         ia[i] = byteString.charCodeAt(i);
-    }
-    const blob = new Blob([ ab ], { type: mimeString });
-    return blob;
+    return new Blob([ ab ], { type: mimeString });
 }
 
 function toggleFullscreen() {
@@ -5831,12 +5945,6 @@ function aspectRatioFit(srcW, srcH, maxW, maxH) {
 
 function getStyleRoot(key) {
     return getComputedStyle(document.querySelector(':root')).getPropertyValue(key);
-}
-
-function evenNumberIndicatorInt(elem) {
-    (Math.abs(parseInt(elem.value) % 2) == 1) ? // detect odd numbers
-        elem.style.color = 'indianred' :
-        elem.style.color = getStyleRoot('--input-color');
 }
 
 function rgbIntToHex(r, g, b) {
@@ -5913,34 +6021,4 @@ function timeFormat(t) {
     if (m < 10) { m = "0" + m; }
     if (s < 10) { s = "0" + s; }
     return h + ':' + m + ':' + s;
-}
-
-function parseINI(data) {
-    const regex = {
-        section: /^\s*\[\s*([^\]]*)\s*\]\s*$/,
-        param: /^\s*([^=]+?)\s*=\s*(.*?)\s*$/,
-        comment: /^\s*;.*$/
-    };
-    const value = {};
-    const lines = data.split(/[\r\n]+/);
-    let section = null;
-    lines.forEach((line) => {
-        if (regex.comment.test(line)) {
-            return;
-        } else if (regex.param.test(line)) {
-            const match = line.match(regex.param);
-            if (section) {
-                value[section][match[1]] = match[2];
-            } else{
-                value[match[1]] = match[2];
-            }
-        } else if (regex.section.test(line)) {
-            const match = line.match(regex.section);
-            value[match[1]] = {};
-            section = match[1];
-        } else if (line.length == 0 && section) {
-            section = null;
-        }
-    });
-    return value;
 }

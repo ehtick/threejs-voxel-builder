@@ -1,6 +1,13 @@
 All notable changes to this project will be documented in this file.
 
-## 4.3.0 nightly
+## 4.3.1 nightly
+- Add merge-selected to export tab
+- Firefox optimization (fix save-as and css styles)
+- Update to babylonjs 7.10.0
+- Fix attachableMeshes error in export tab
+- Remove deprecated .ini format to save resources
+
+## 4.3.0
 > This version is a breath of fresh air after the SPS fallout
 - Add tool indicator, display the name of the selected tool
 - Add import voxels and bakes from json file
@@ -10,7 +17,6 @@ All notable changes to this project will be documented in this file.
 - Clean up and improve voxel transforms
 - Update PT to support three r165 framebuffers
 - Voxel colors are used for the point-cloud
-- Firefox optimization (fix save-as and css styles)
 - Fix unwanted camera rotation in most cases
 - Fix PT crashes on 0.0 inputs
 - Fix camera fov
